@@ -4,15 +4,20 @@ const ServerState = require("./ServerState");
 const ServerError = require("./ServerError");
 const express = require("express");
 const fs = require("fs")
+const ChatServer = require("./chat/ChatServer")
 const ServerStats = require("./ServerStats")
 const path = require("path")
+
 const EventEmitter = require("events");
 
 class Server extends EventEmitter {
     constructor(options) {
         super();
         this.app = express();
+        this.http = require('http').Server(this.app);
+        this.socketClient = io = require('socket.io')(this.http);
         this.routes = [];
+        this.chatEngine = new ChatServer(this);
         this.cooldowns = [];
         this.stats = new ServerStats({ server: this });
         this.state = ServerState.CONNECTING;
@@ -103,10 +108,9 @@ class Server extends EventEmitter {
                 console.error(err)
                 res.status(500).json({ code: 500, error: true, message: "Internal Server Error." });
             });
-        console.log(this.options)
         const port = this.options.port
         try {
-            this.app.listen(port, () => {
+            this.http.listen(port, () => {
                 this.state = ServerState.CONNECTED;
                 this.emit("ready", true)
                 this.emit("debug", `[Server] Server started on port ${port}`);

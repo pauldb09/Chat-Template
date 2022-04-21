@@ -2,10 +2,11 @@ const Server = require("./structures/Server");
 const path = require("path")
 
 const serv = new Server({
+    devMode: true,
     port: 3000,
     allowedIps: [], // [] for all
     rateLimiteTimeout: 1000,
-    maxRequestsPerSecond: 3,
+    maxRequestsPerSecond: 5,
     acceptMultipleIps: false,
 })
 
