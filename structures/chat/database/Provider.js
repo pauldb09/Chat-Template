@@ -1,12 +1,12 @@
 const EventEmitter = require("events");
-const EnmapProvider = require("./enmap");
+const EnmapProvider = require("./enmap/index.js");
 const ServerError = require("../../ServerError");
 
 class Provider extends EventEmitter {
     constructor(options) {
         super();
-        this.group = options.group;
-        this.provider = this.resolveProvider(options.provider)
+        this.group = options.group ? options.group : "default";
+        this.provider = this.resolveProvider(options ? options.provider : "enmap");
     }
 
     async start() {

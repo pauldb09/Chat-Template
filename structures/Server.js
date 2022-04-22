@@ -15,7 +15,7 @@ class Server extends EventEmitter {
         super();
         this.app = express();
         this.http = require('http').Server(this.app);
-        this.socketClient = io = require('socket.io')(this.http);
+        this.socketClient = require('socket.io')(this.http);
         this.routes = [];
         this.chatEngine = new ChatServer(this);
         this.cooldowns = [];
@@ -86,6 +86,12 @@ class Server extends EventEmitter {
         }
         this.app
             .use(express.json())
+            .engine("html", require("ejs").renderFile)
+            .set("view engine", "ejs")
+            // Set the css and js folder to ./public
+            .use(express.static(path.join(__dirname, "/public")))
+            // Set the ejs templates to ./views
+            .set("views", path.join(__dirname, "/views"))
             .use(express.urlencoded({ extended: false }))
             .set('trust proxy', true)
             .set("port", this.options.port)
